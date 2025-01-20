@@ -34,6 +34,7 @@
 
         <v-col cols="12">
           <h4>SELECIONE O HORÁRIO DE INÍCIO</h4>
+          <h6 v-if="horariosDisponiveis?.length === 0" class="text-red">NÃO HÁ EXPEDIENTE PARA O DIA SELECIONADO</h6>
           <div class="horarios-container">
             <v-btn
               v-for="(horario, index) in horariosDisponiveis"
@@ -49,12 +50,53 @@
 
         <v-col cols="12" class="text-center">
           <v-btn
+            block
             color="secondary"
-            @click="confirmarAgendamento"
+            @click="abrirModalConfirmacao"
           >
             Confirmar Agendamento
           </v-btn>
         </v-col>
+
+        <!-- Modal de Confirmação -->
+        <v-dialog
+          v-model="modalConfirmacao"
+          persistent
+          max-width="500px"
+        >
+          <v-card>
+            <template v-slot:title>
+              <span class="font-weight-black text-medium-emphasis ps-2">CONFIRMAÇÃO DE AGENDAMENTO</span>
+            </template>
+            <v-card-text >
+              <p>
+                VOCÊ ESTÁ PRESTES A AGENDAR O SERVIÇO
+                <strong>{{ getDescricaoServico() }}</strong>
+                NO HORÁRIO DAS <strong>{{ horarioSelecionado }}</strong> HRS.
+              </p>
+              <p>
+                O VALOR DO SERVIÇO É <strong>R$ {{ parseFloat(getVlrServico() || 0).toFixed(2).replace('.', ',') }}</strong>.
+              </p>
+              <br/>
+              <p class="text-primary">
+                TEM CERTEZA DE QUE DESEJA CONFIRMAR O AGENDAMENTO?
+              </p>
+            </v-card-text>
+            <v-card-actions>
+              <v-btn text="Close" color="error"
+              @click="modalConfirmacao = false">
+                CANCELAR
+              </v-btn>
+              <v-spacer></v-spacer>
+              <v-btn text="Save" variant="elevated" color="success"
+                :loading="loading"
+                @click="confirmarAgendamento">
+                CONFIRMAR
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+
       </v-container>
     </SideMenu>
   </v-app>
@@ -63,12 +105,12 @@
 <script >
 import { mapGetters } from "vuex";
 import SideMenu from "@/components/SideMenu.vue";
-import { VDateInput } from 'vuetify/labs/VDateInput'
+import { VDateInput } from 'vuetify/labs/VDateInput';
+import format from "date-fns/format";
 
 export default {
   components: {
     SideMenu,
-    //VCalendar,
     VDateInput
   },
   data() {
@@ -76,10 +118,13 @@ export default {
       snackbar: false,
       alertTitle: "",
       timeout: 3000,
-      dataSelecionada: new Date(),//.toISOString().slice(0, 10),
+      modalConfirmacao: false,
+      dataSelecionada: new Date(),
       horariosDisponiveis: [],
       horarioSelecionado: null,
-      titulo : ''
+      expedienteSelecionado: null,
+      titulo : '',
+      loading: false
     };
   },
   computed: {
@@ -93,19 +138,17 @@ export default {
     },
   },
   created() {
-    this.$root.setLoadingState(true);
-
     if(!this.servico){
       this.$router.push(`/home/${this.$route.params.id}`);
+    }else{
+      this.carregarEmpresa();
+      this.buscarHorarios();
+      this.selecionarHorario();
     }
-    this.carregarEmpresa();
-    this.buscarHorarios();
-    this.selecionarHorario();
-
-    this.$root.setLoadingState(false);
   },
   methods:{
     async carregarEmpresa() {
+      this.$root.setLoadingState(true);
       const storedCredential = localStorage.getItem("googleUserCredential");
       if (storedCredential) {
         try {
@@ -119,34 +162,99 @@ export default {
           console.error("ERRO AO CARREGAR EMPRESA: ", error);
           this.alertTitle = "ERRO AO CARREGAR EMPRESA: " + error;
           this.snackbar = true;
+        }finally {
+          this.$root.setLoadingState(false);
         }
       }
     },
     buscarHorarios() {
+      this.$root.setLoadingState(true);
       // Chama o método da store para buscar os horários
       const data = this.atualizarData(this.dataSelecionada);
-      this.titulo = this.getDescricaoServico();
+      //const data = this.dataSelecionada;
+      this.titulo = this.getTitulo(this.getDescricaoServico());
       this.$store
         .dispatch('clienteAgendamento/consultarAgenda', {
           id: this.$route.params.id,
           data: data,
           servico: this.servico
         })
-        .then((horarios) => {
-          this.horariosDisponiveis = horarios.map(horario => {
+        .then((response) => {
+          const horarios = response.horarios; // Lista de horários
+          const expedienteId = response.empresa_expediente_id; // ID do expediente
 
-            return horario.substring(11, 16);
-          });
+          if (horarios && horarios.length > 0) {
+            // Formata os horários para o formato HH:mm
+            this.horariosDisponiveis = horarios.map(horario => {
+              return horario.substring(11, 16); // Pega a hora e os minutos
+            });
+
+            // Define o expediente selecionado
+            this.expedienteSelecionado = expedienteId; // Como o expediente é o mesmo para todos os horários
+          } else {
+            this.horariosDisponiveis = horarios;
+          }
         })
       .catch((error) => {
         console.error('Erro ao buscar horários:', error);
+      })
+      .finally(() =>{
+        this.$root.setLoadingState(false);
       });
     },
     selecionarHorario(horario) {
       this.horarioSelecionado = horario; // Define o horário selecionado
     },
     confirmarAgendamento() {
-      // Lógica para confirmar o agendamento
+      this.loading = true;
+
+      const storedCredential = localStorage.getItem("googleUserCredential");
+      if (!storedCredential) {
+        this.alertTitle = "NÃO FOI POSSÍVEL LOCALIZAR O E-MAIL";
+        this.snackbar = true;
+      }
+      const decodedUser = JSON.parse(storedCredential);
+      const dataAtualizada = this.atualizarData(this.dataSelecionada);
+      //const dataAtualizada = this.dataSelecionada;
+      const servicoJson = JSON.parse(this.servico);
+
+      const agendamento = {
+        id: this.$route.params.id,
+        data: dataAtualizada,
+        horario: this.horarioSelecionado,
+        duracao: servicoJson.duracao,
+        vlr: servicoJson.vlr,
+        email: decodedUser.email,
+        nome_completo: decodedUser.name,
+        empresa_servico_id: servicoJson.id,
+        empresa_expediente_id : this.expedienteSelecionado
+      };
+
+      this.$store
+        .dispatch('clienteAgendamento/confirmarAgendamento', agendamento)
+        .then(() => {
+          this.alertTitle = "AGENDA CONFIRMADA COM SUCESSO";
+          this.snackbar = true;
+
+          setTimeout(() => {
+            this.$router.push(`/home/${this.$route.params.id}`);
+          }, 3000);
+        })
+        .catch((error) => {
+          console.error('ERRO AO CONFIRMAR AGENDAMENTO: ', error);
+          this.alertTitle = "ERRO AO CONFIRMAR AGENDAMENTO: "+ error;
+          this.snackbar = true;
+        })
+        .finally(()=>{
+          this.loading = false;
+        });
+    },
+    abrirModalConfirmacao() {
+      if (!this.horarioSelecionado) {
+        this.alertTitle = "POR FAVOR, SELECIONE UM HORÁRIO ANTES DE CONFIRMAR";
+        this.snackbar = true;
+        return;
+      }
       if(!this.empresa){
         this.alertTitle = "NÃO FOI POSSÍVEL LOCALIZAR A EMPRESA";
         this.snackbar = true;
@@ -157,40 +265,7 @@ export default {
         this.snackbar = true;
         return;
       }
-      if(!this.horarioSelecionado){
-        this.alertTitle = "HORÁRIO NÃO FOI SELECIONADO";
-        this.snackbar = true;
-        return;
-      }
-
-      const storedCredential = localStorage.getItem("googleUserCredential");
-      if (!storedCredential) {
-        this.alertTitle = "NÃO FOI POSSÍVEL LOCALIZAR O E-MAIL";
-        this.snackbar = true;
-      }
-      const decodedUser = JSON.parse(storedCredential);
-      const dataAtualizada = this.atualizarData(this.dataSelecionada);
-
-      const jsonServico = JSON.parse(this.servico)
-      console.log(jsonServico.id);
-      const agendamento = {
-        id: this.$route.params.id,
-        data: dataAtualizada,
-        horario: this.horarioSelecionado,
-        duracao: jsonServico.duracao,
-        email: decodedUser.email,
-        servico_id: jsonServico.agenda_servicos.id,
-        empresa_servico_id: jsonServico.id
-      };
-
-      this.$store
-        .dispatch('clienteAgendamento/confirmarAgendamento', agendamento)
-        .then(() => {
-          this.$router.push(`/agenda/${this.$route.params.id}`);
-        })
-        .catch((error) => {
-          console.error('ERRO AO CONFIRMAR AGENDAMENTO: ', error);
-        });
+      this.modalConfirmacao = true;
     },
     atualizarData(data) {
       try {
@@ -201,14 +276,17 @@ export default {
       }
     },
     getDescricaoServico() {
-      const jsonServico = JSON.parse(this.servico);
-      const agendaServicos = jsonServico.agenda_servicos;
-
-      return this.servico && agendaServicos && jsonServico.agenda_servicos.descricao
-        ? "SELECIONE UMA DATA PARA: " + jsonServico.agenda_servicos.descricao
+      return this.servico.descricao
+    },
+    getTitulo(descricao){
+      return descricao
+        ? "SELECIONE UMA DATA PARA: " + descricao
         : "SELECIONE UMA DATA PARA: SERVIÇO NÃO DISPONÍVEL";
     },
-  }
+    getVlrServico(){
+      return JSON.parse(this.servico).vlr;
+    }
+  },
 };
 </script>
 <style>

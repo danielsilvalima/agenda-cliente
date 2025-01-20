@@ -37,12 +37,12 @@
                   class="d-flex justify-space-between align-center">
 
                     <v-list-item-content class="d-flex flex-column">
-                      <span class="font-weight-black text-body-2">{{ servico.agenda_servicos.descricao }}</span>
+                      <span class="font-weight-black text-body-2">{{ servico.descricao }}</span>
                       <span class="font-weight-light text-h8">
                         <v-icon color="primary" small class="mr-1">mdi-clock-outline</v-icon>
-                          Duração: {{ servico.duracao }}
+                          DURAÇÃO: {{ servico.duracao }}
                           <v-icon color="success" small class="ml-3 mr-1">mdi-currency-usd</v-icon>
-                          Valor: R$ {{ parseFloat(servico.vlr).toFixed(2) }}</span>
+                          VALOR: R$ {{ parseFloat(servico.vlr || 0).toFixed(2).replace('.', ',') }}</span>
                     </v-list-item-content>
 
                     <!-- Botão Reservar -->

@@ -79,7 +79,9 @@ export default {
       // Armazena o token no localStorage
       localStorage.setItem("googleUserCredential", JSON.stringify(decodedUser));
       try {
-        await this.$store.dispatch("empresa/loginUsuario", {id: this.$route.params.id, credencial: JSON.stringify(decodedUser)});
+        await this.$store.dispatch("empresa/loginUsuario", {
+          id: this.$route.params.id, credencial: JSON.stringify(decodedUser)
+        });
         this.loggedIn = true;
         this.$router.push(`/home/${this.$route.params.id}`);
       } catch (error) {
