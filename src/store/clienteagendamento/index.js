@@ -10,7 +10,6 @@ export default {
     getClienteAgendamento: (state) => state.clienteAgendamento,
   },
   mutations: {
-
     setClienteAgendamento(state, clienteAgendamento) {
       state.clienteAgendamento = clienteAgendamento;
     },
@@ -26,9 +25,33 @@ export default {
         throw error;
       }
     },
+    async consultarAgendamentos({ commit }, {id, email} ) {
+      try {
+        const response = await DataService.getAgendamentos(id, email);
+
+        return response.data;
+      } catch (error) {
+        console.error("Erro ao buscar a agenda", error);
+        throw error;
+      }
+    },
     async confirmarAgendamento({ commit }, agendamento ) {
       try {
         const response = await DataService.createAgenda(agendamento);
+
+        if (response.data && Object.keys(response.data).length > 0) {
+          commit("setClienteAgendamento", response.data);
+        }else{
+          commit("setClienteAgendamento", null);
+        }
+      } catch (error) {
+        console.error("Erro ao buscar a agenda", error);
+        throw error;
+      }
+    },
+    async cancelarAgendamento({ commit }, agendamento ) {
+      try {
+        const response = await DataService.deleteAgenda(agendamento);
 
         if (response.data && Object.keys(response.data).length > 0) {
           commit("setClienteAgendamento", response.data);

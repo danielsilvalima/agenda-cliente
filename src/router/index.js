@@ -11,6 +11,7 @@ import { createRouter, createWebHistory } from 'vue-router/auto'
 import NotFound from '../components/NotFound.vue'
 import Home from '../components/Home.vue'
 import Agenda from '../components/Agenda.vue'
+import Agendamento from '../components/Agendamento.vue'
 import Login from '../components/Login.vue'
 
 const router = createRouter({
@@ -30,6 +31,11 @@ const router = createRouter({
         path: "/agenda/:id",
         name: "Agenda",
         component: Agenda,
+      },
+      {
+        path: "/agendamento/:id",
+        name: "Agendamento",
+        component: Agendamento,
       },
       {
         path: "/:pathMatch(.*)*", // Captura rotas inexistentes

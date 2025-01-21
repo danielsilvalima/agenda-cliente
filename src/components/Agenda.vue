@@ -34,6 +34,7 @@
 
         <v-col cols="12">
           <h4>SELECIONE O HORÁRIO DE INÍCIO</h4>
+          <br/>
           <h6 v-if="horariosDisponiveis?.length === 0" class="text-red">NÃO HÁ EXPEDIENTE PARA O DIA SELECIONADO</h6>
           <div class="horarios-container">
             <v-btn
@@ -170,8 +171,9 @@ export default {
     buscarHorarios() {
       this.$root.setLoadingState(true);
       // Chama o método da store para buscar os horários
-      const data = this.atualizarData(this.dataSelecionada);
-      //const data = this.dataSelecionada;
+      let data = this.atualizarData(this.dataSelecionada);
+      let horario = this.gerarHorario();
+      data = data + " " + horario;
       this.titulo = this.getTitulo(this.getDescricaoServico());
       this.$store
         .dispatch('clienteAgendamento/consultarAgenda', {
@@ -192,7 +194,7 @@ export default {
             // Define o expediente selecionado
             this.expedienteSelecionado = expedienteId; // Como o expediente é o mesmo para todos os horários
           } else {
-            this.horariosDisponiveis = horarios;
+            this.horariosDisponiveis = [];
           }
         })
       .catch((error) => {
@@ -276,7 +278,8 @@ export default {
       }
     },
     getDescricaoServico() {
-      return this.servico.descricao
+      const servico = JSON.parse(this.servico);
+      return servico.descricao;
     },
     getTitulo(descricao){
       return descricao
@@ -285,6 +288,13 @@ export default {
     },
     getVlrServico(){
       return JSON.parse(this.servico).vlr;
+    },
+    gerarHorario(){
+      const agora = new Date();
+      const horas = String(agora.getHours()).padStart(2, '0');
+      const minutos = String(agora.getMinutes()).padStart(2, '0');
+      const segundos = String(agora.getSeconds()).padStart(2, '0');
+      return `${horas}:${minutos}:${segundos}`;
     }
   },
 };

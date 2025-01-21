@@ -10,7 +10,17 @@
         <v-toolbar-title>
           {{ empresa?.razao_social}}
         </v-toolbar-title>
+
         <v-spacer></v-spacer>
+
+        <v-btn
+          variant="elevated"
+          color="secondary"
+          @click="meusAgendamentos"
+        >
+          <v-icon small class="mr-2">mdi-calendar-text</v-icon>
+          MEUS AGENDAMENTOS
+        </v-btn>
 
       </v-app-bar>
 
@@ -120,6 +130,9 @@ export default {
     },
     navigateHome(){
       router.push(`/home/${this.$route.params.id}`)
+    },
+    meusAgendamentos() {
+      this.$router.push({ path: `/agendamento/${this.$route.params.id}` });
     }
   },
 };

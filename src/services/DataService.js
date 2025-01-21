@@ -29,6 +29,18 @@ class DataService {
     return http_token.post(`/agenda/empresa/cliente/agenda`, data);
   }
 
+  deleteAgenda(agendamento) {
+    return http_token.delete(`/agenda/empresa/cliente/agenda`, {
+      data: agendamento
+    });
+  }
+
+  getAgendamentos(id, email) {
+    return http_token.get(`/agenda/empresa/cliente/agenda/agendamento`, {
+      params: { id, email },
+    });
+  }
+
 }
 
 export default new DataService();
