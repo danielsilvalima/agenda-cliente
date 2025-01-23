@@ -17,6 +17,11 @@
   </v-snackbar>
   <v-app>
     <SideMenu>
+      <v-breadcrumbs :items="items">
+        <template v-slot:divider>
+          <v-icon icon="mdi-chevron-right"></v-icon>
+        </template>
+      </v-breadcrumbs>
       <v-expansion-panels>
         <v-expansion-panel>
           <v-expansion-panel-title>
@@ -80,7 +85,14 @@ export default {
       alertTitle: "",
       timeout: 3000,
       titulo : 'SERVIÇOS DISPONÍVEIS',
-      listaServicos: []
+      listaServicos: [],
+      items: [
+        {
+          title: 'HOME',
+          disabled: true,
+          href: `/home/${this.$route.params.id}`,
+        },
+      ],
     };
   },
   computed: {

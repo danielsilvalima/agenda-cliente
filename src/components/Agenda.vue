@@ -17,6 +17,11 @@
   </v-snackbar>
   <v-app>
     <SideMenu>
+      <v-breadcrumbs :items="items">
+        <template v-slot:divider>
+          <v-icon icon="mdi-chevron-right"></v-icon>
+        </template>
+      </v-breadcrumbs>
       <v-container>
         <v-row dense>
           <v-col cols="12" md="12">
@@ -107,7 +112,6 @@
 import { mapGetters } from "vuex";
 import SideMenu from "@/components/SideMenu.vue";
 import { VDateInput } from 'vuetify/labs/VDateInput';
-import format from "date-fns/format";
 
 export default {
   components: {
@@ -125,7 +129,19 @@ export default {
       horarioSelecionado: null,
       expedienteSelecionado: null,
       titulo : '',
-      loading: false
+      loading: false,
+      items: [
+        {
+          title: 'HOME',
+          disabled: false,
+          href: `/home/${this.$route.params.id}`,
+        },
+        {
+          title: 'AGENDA',
+          disabled: true,
+          href: `/agenda/${this.$route.params.id}`,
+        },
+      ],
     };
   },
   computed: {

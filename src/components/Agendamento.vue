@@ -17,6 +17,11 @@
   </v-snackbar>
   <v-app>
     <SideMenu>
+      <v-breadcrumbs :items="items">
+      <template v-slot:divider>
+        <v-icon icon="mdi-chevron-right"></v-icon>
+      </template>
+    </v-breadcrumbs>
       <v-expansion-panels>
         <v-expansion-panel
           v-for="(agendamento, index) in historicoAgendamentos"
@@ -124,6 +129,23 @@ export default {
       loading: false,
       modalConfirmacao : false,
       agendamentoSelecionado: null,
+      items: [
+        {
+          title: 'HOME',
+          disabled: false,
+          href: `/home/${this.$route.params.id}`,
+        },
+        {
+          title: 'AGENDA',
+          disabled: false,
+          href: `/agenda/${this.$route.params.id}`,
+        },
+        {
+          title: 'AGENDAMENTO',
+          disabled: true,
+          href: `/agendamento/${this.$route.params.id}`,
+        },
+      ],
     };
   },
   computed: {
