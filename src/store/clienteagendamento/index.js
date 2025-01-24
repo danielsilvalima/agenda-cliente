@@ -44,6 +44,7 @@ export default {
         }else{
           commit("setClienteAgendamento", null);
         }
+        return response;
       } catch (error) {
         console.error("Erro ao buscar a agenda", error);
         throw error;

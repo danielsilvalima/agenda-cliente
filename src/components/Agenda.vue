@@ -250,8 +250,8 @@ export default {
 
       this.$store
         .dispatch('clienteAgendamento/confirmarAgendamento', agendamento)
-        .then(() => {
-          this.alertTitle = "AGENDA CONFIRMADA COM SUCESSO";
+        .then((agenda) => {
+          this.alertTitle = agenda.data.message;
           this.snackbar = true;
 
           setTimeout(() => {
@@ -259,8 +259,8 @@ export default {
           }, 3000);
         })
         .catch((error) => {
-          console.error('ERRO AO CONFIRMAR AGENDAMENTO: ', error);
-          this.alertTitle = "ERRO AO CONFIRMAR AGENDAMENTO: "+ error;
+          console.error(error.response.data.message);
+          this.alertTitle = error.response.data.message;
           this.snackbar = true;
         })
         .finally(()=>{
