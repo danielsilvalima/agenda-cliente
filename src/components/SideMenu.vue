@@ -1,6 +1,6 @@
 <template>
   <v-card>
-    <v-layout style="height: 100vh;">
+    <v-layout >
       <v-app-bar
         color="primary"
         prominent rounded
@@ -39,7 +39,7 @@
       </v-navigation-drawer>
 
       <!-- Conteúdo principal -->
-      <v-main style="height: 100vh; display: flex; align-items: flex-start; justify-content: center;" >
+      <v-main style="display: flex;  justify-content: center;" >
         <v-container >
           <template v-if="$route.path === '/home'">
             <div v-if="empresa === null">
@@ -51,7 +51,7 @@
               </v-card>
             </div>
 
-            <div v-else>
+            <div v-else style="display: flex;  justify-content: center; height: 100vh;">
               <p>{{ message }}</p>
             </div>
           </template>
