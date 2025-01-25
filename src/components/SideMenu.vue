@@ -1,6 +1,6 @@
 <template>
   <v-card>
-    <v-layout>
+    <v-layout style="height: 100vh;">
       <v-app-bar
         color="primary"
         prominent rounded
@@ -39,8 +39,8 @@
       </v-navigation-drawer>
 
       <!-- Conteúdo principal -->
-      <v-main class="fill-height" >
-        <v-container class="pt-4" style="min-height: 100vh;">
+      <v-main style="height: 100vh; display: flex; align-items: flex-start; justify-content: center;" >
+        <v-container >
           <template v-if="$route.path === '/home'">
             <div v-if="empresa === null">
               <v-card elevation="2" class="pa-4 text-center">

@@ -286,12 +286,10 @@ export default {
       this.modalConfirmacao = true;
     },
     atualizarData(data) {
-      try {
-        // Verifica se é uma string e converte para o formato Date se necessário
-        return new Date(data).toISOString().slice(0, 10);
-      } catch (error) {
-        console.error("ERRO AO ATUALIZAR DATA: ", error);
-      }
+      const dateObj = new Date(data);
+      const offset = dateObj.getTimezoneOffset() * 60000; // Ajuste de fuso horário
+      const localDate = new Date(dateObj - offset).toISOString().slice(0, 10);
+      return localDate;
     },
     getDescricaoServico() {
       const servico = JSON.parse(this.servico);
