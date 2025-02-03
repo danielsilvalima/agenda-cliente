@@ -1,69 +1,49 @@
 <template>
-  <v-card>
-    <v-layout >
-      <v-app-bar
-        color="primary"
-        prominent rounded
-      >
-        <v-app-bar-nav-icon variant="text" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+  <v-row>
+    <v-col cols="12" offset-sm="12" sm="12">
+      <v-card >
+        <v-card-title class="bg-blue d-flex align-center text-white">
+          <span class="text-h5">{{ empresa ? empresa.razao_social : "SUA EMPRESA" }}</span>
 
-        <v-toolbar-title>
-          {{ empresa?.razao_social}}
-        </v-toolbar-title>
+          <v-spacer></v-spacer>
 
-        <v-spacer></v-spacer>
+          <v-menu>
+            <template v-slot:activator="{ props }">
+              <v-btn icon="mdi-menu" variant="text" v-bind="props"></v-btn>
+            </template>
 
-        <v-btn
-          variant="elevated"
-          color="secondary"
-          @click="meusAgendamentos"
-        >
-          <v-icon small class="mr-2">mdi-calendar-text</v-icon>
-          MEUS AGENDAMENTOS
-        </v-btn>
+            <v-list>
+              <v-list-item v-for="(item, i) in menuItems" :key="i" @click="navigateTo(item.route)">
+                <v-list-item-title>{{ item.title }}</v-list-item-title>
+              </v-list-item>
 
-      </v-app-bar>
+              <v-divider></v-divider>
 
-      <!-- Menu lateral -->
-      <v-navigation-drawer v-model="drawer" temporary app>
-        <v-list>
-          <v-list-item @click="navigateHome()">Home</v-list-item>
-        </v-list>
+              <v-list-item>
+                <v-btn size="small" text variant="elevated" block color="primary" @click="logout">SAIR</v-btn>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </v-card-title>
 
-        <v-spacer></v-spacer>
-        <div class="text-center">
-          <v-btn variant="elevated" style="width: 80%;" color="primary"  @click="logout" >
-            SAIR
-          </v-btn>
-      </div>
-      </v-navigation-drawer>
+        <template v-if="$route.path === '/home'">
+          <div v-if="empresa === null" class="d-flex justify-center align-center">
+            <v-card elevation="2" class="pa-4 text-center " style=" height: 20%; ">
+              <p class="mb-4 text-caption">Você ainda não possui uma empresa cadastrada.</p>
+              <v-btn size="small" variant="elevated" color="primary" @click="redirectToEmpresa" class="text-caption">
+                CADASTRAR EMPRESA
+              </v-btn>
+            </v-card>
+          </div>
 
-      <!-- Conteúdo principal -->
-      <v-main style="display: flex;  justify-content: center;" >
-        <v-container >
-          <template v-if="$route.path === '/home'">
-            <div v-if="empresa === null">
-              <v-card elevation="2" class="pa-4 text-center">
-                <p class="mb-4">Você ainda não possui uma empresa cadastrada.</p>
-                <v-btn variant="elevated" color="primary" @click="redirectToEmpresa">
-                  CADASTRAR EMPRESA
-                </v-btn>
-              </v-card>
-            </div>
+          <div v-else class="d-flex justify-center align-center" style="height: 100vh;">
+            <p class="text-caption">{{ message }}</p>
+          </div>
+        </template>
 
-            <div v-else style="display: flex;  justify-content: center; height: 100vh;">
-              <p>{{ message }}</p>
-            </div>
-          </template>
-
-          <!-- Slot para renderizar o conteúdo de outras rotas -->
-          <template v-else>
-            <slot />
-          </template>
-        </v-container>
-      </v-main>
-    </v-layout>
-  </v-card>
+      </v-card>
+    </v-col>
+  </v-row>
 </template>
 
 <script>
@@ -77,7 +57,11 @@ export default {
     return {
       drawer: false,
       group: null,
-      message : ''
+      message : '',
+      menuItems : [
+        { title: 'HOME', route: `/home/${this.$route.params.id}` },
+        { title: 'AGENDAMENTOS', route: `/agendamento/${this.$route.params.id}` },
+      ],
     };
   },
   created() {

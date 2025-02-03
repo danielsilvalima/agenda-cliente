@@ -6,7 +6,7 @@
   {{ alertTitle }}
 
     <template v-slot:actions>
-      <v-btn
+      <v-btn size="small"
         color="blue"
         variant="text"
         @click="snackbar = false"
@@ -15,99 +15,99 @@
       </v-btn>
     </template>
   </v-snackbar>
-  <v-app>
-    <SideMenu>
-      <v-breadcrumbs :items="items">
-      <template v-slot:divider>
-        <v-icon icon="mdi-chevron-right"></v-icon>
-      </template>
-    </v-breadcrumbs>
-      <v-expansion-panels>
-        <v-expansion-panel
-          v-for="(agendamento, index) in historicoAgendamentos"
-          :key="agendamento.id"
-        >
-          <!-- Título do painel -->
-          <v-expansion-panel-title>
-            <div class="d-flex justify-space-between align-center">
-              <div class="text-content" >
-                <h3 class="primary-text">
-                  {{ getDescricaoServico(agendamento?.empresa_servico_id) }} - VALOR:
-                  <span class="font-weight-bold text-red" >
-                    R$ {{ formatarValor(agendamento.vlr) }}
-                  </span></h3>
-
-              </div>
+  <SideMenu/>
+    <v-breadcrumbs :items="items" class="text-caption">
+    <template v-slot:divider>
+      <v-icon icon="mdi-chevron-right"></v-icon>
+    </template>
+  </v-breadcrumbs>
+    <v-expansion-panels><p class="text-caption text-red mb-2">PARA CANCELAR UM AGENDAMENTO, CLIQUE NO X</p>
+      <v-expansion-panel
+        v-for="(agendamento, index) in historicoAgendamentos"
+        :key="agendamento.id"
+      >
+        <!-- Título do painel -->
+        <v-expansion-panel-title>
+          <div class="d-flex justify-space-between align-center">
+            <div class="text-content" >
+              <h3 class="primary-text text-caption">
+                {{ getDescricaoServico(agendamento?.empresa_servico_id) }} - VALOR:
+                <span class="font-weight-bold text-red" >
+                  R$ {{ formatarValor(agendamento.vlr) }}
+                </span></h3>
 
             </div>
-          </v-expansion-panel-title>
 
-          <!-- Conteúdo do painel -->
-          <v-expansion-panel-text>
-            <v-card class="pa-4">
-              <v-list>
-                <v-list-item>
-                  <v-list-item-content>
-                    <v-list-item-subtitle>
-                      <strong>DATA:</strong>
-                      {{ formatarData(agendamento.start_scheduling_at) }} ÀS
-                      {{ formatarHorario(agendamento.start_scheduling_at) }}
-                      <strong> - DURAÇÃO:</strong> {{ agendamento.duracao }}
-                    </v-list-item-subtitle>
-                  </v-list-item-content>
-                  <template v-slot:append>
-                    <v-btn
-                      :disabled="!podeCancelar(agendamento.start_scheduling_at)"
-                      variant="elevated"
-                      color="secondary"
-                      @click="abrirModalConfirmacao(agendamento)">
-                      <v-icon small class="mr-2">mdi-close-circle</v-icon>
-                      CANCELAR RESERVA
-                    </v-btn>
-                  </template>
-                </v-list-item>
-              </v-list>
-            </v-card>
-          </v-expansion-panel-text>
-        </v-expansion-panel>
-      </v-expansion-panels>
+          </div>
+        </v-expansion-panel-title>
 
-      <v-dialog
-        v-model="modalConfirmacao"
-        persistent
-        max-width="500px"
-      >
-        <v-card>
-          <template v-slot:title>
-            <span class="font-weight-black text-medium-emphasis ps-2">CONFIRMAÇÃO DE CANCELAMENTO DE AGENDAMENTO</span>
-          </template>
-          <v-card-text>
-            <p>
-              VOCÊ ESTÁ PRESTES A CANCELAR O AGENDAMENTO DO SERVIÇO
-              <strong>{{ getDescricaoServico(agendamentoSelecionado?.empresa_servico_id) || 'DESCONHECIDO' }}</strong>
-              NO HORÁRIO DAS <strong>{{ formatarHorario(agendamentoSelecionado?.start_scheduling_at) }}</strong> HRS.
-            </p>
-            <p>
-              O VALOR DO SERVIÇO É <strong>R$ {{ parseFloat(agendamentoSelecionado?.vlr || 0).toFixed(2).replace('.', ',') }}</strong>.
-            </p>
-            <br />
-            <p class="text-primary">
-              TEM CERTEZA DE QUE DESEJA CONFIRMAR O CANCELAMENTO?
-            </p>
-          </v-card-text>
-          <v-card-actions>
-            <v-btn text color="error" @click="fecharModalConfirmacao">
-              CANCELAR
-            </v-btn>
-            <v-spacer></v-spacer>
-            <v-btn text variant="elevated" color="success" :loading="loading" @click="cancelarAgendamento">
-              CONFIRMAR
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-    </SideMenu>
-  </v-app>
+        <!-- Conteúdo do painel -->
+        <v-expansion-panel-text>
+            <v-list>
+              <v-list-item>
+                <v-list-item-content>
+                  <v-list-item-subtitle class="text-caption">
+                    <v-icon small color="black" class="mr-1">mdi-calendar</v-icon>
+                    <strong>DATA:</strong>
+                    {{ formatarData(agendamento.start_scheduling_at) }} ÀS
+                    {{ formatarHorario(agendamento.start_scheduling_at) }}
+                  </v-list-item-subtitle>
+
+                  <v-list-item-subtitle class="text-caption">
+                    <v-icon small color="black" class="mr-1">mdi-clock-outline</v-icon>
+                    <strong>DURAÇÃO:</strong> {{ formatarDuracao(agendamento.duracao) }}
+                  </v-list-item-subtitle>
+                </v-list-item-content>
+                <template v-slot:append>
+                  <v-btn size="small"
+                    :disabled="!podeCancelar(agendamento.start_scheduling_at)"
+                    variant="elevated"
+                    color="secondary"
+                    @click="abrirModalConfirmacao(agendamento)">
+                    <v-icon small>mdi-close-circle</v-icon>
+
+                  </v-btn>
+                </template>
+              </v-list-item>
+            </v-list>
+        </v-expansion-panel-text>
+      </v-expansion-panel>
+    </v-expansion-panels>
+
+    <v-dialog
+      v-model="modalConfirmacao"
+      persistent
+      max-width="500px"
+    >
+      <v-card>
+        <template v-slot:title>
+          <span class="font-weight-black text-medium-emphasis ps-2 text-caption">CONFIRMAÇÃO DE CANCELAMENTO DE AGENDAMENTO</span>
+        </template>
+        <v-card-text>
+          <p class="text-caption">
+            VOCÊ ESTÁ PRESTES A CANCELAR O AGENDAMENTO DO SERVIÇO
+            <strong>{{ getDescricaoServico(agendamentoSelecionado?.empresa_servico_id) || 'DESCONHECIDO' }}</strong>
+            NO HORÁRIO DAS <strong>{{ formatarHorario(agendamentoSelecionado?.start_scheduling_at) }}</strong> HRS.
+          </p>
+          <p class="text-caption">
+            O VALOR DO SERVIÇO É <strong>R$ {{ parseFloat(agendamentoSelecionado?.vlr || 0).toFixed(2).replace('.', ',') }}</strong>.
+          </p>
+          <br />
+          <p class="text-primary text-caption">
+            TEM CERTEZA DE QUE DESEJA CONFIRMAR O CANCELAMENTO?
+          </p>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn size="small" text color="error" @click="fecharModalConfirmacao" class="text-caption">
+            CANCELAR
+          </v-btn>
+          <v-spacer></v-spacer>
+          <v-btn size="small" text variant="elevated" color="success" :loading="loading" @click="cancelarAgendamento" class="text-caption">
+            CONFIRMAR
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
 </template>
 
 <script >
@@ -265,6 +265,14 @@ export default {
         console.error("ERRO AO ATUALIZAR DATA: ", error);
       }
     },
+    formatarDuracao(duracao) {
+    const [horas, minutos, segundos] = duracao.split(":").map(Number);
+    if (horas > 0) {
+      return `${horas}H:${minutos.toString().padStart(2, "0")}MIN`;
+    } else {
+      return `${minutos}MIN`;
+    }
+  },
   }
 };
 </script>

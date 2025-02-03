@@ -15,10 +15,6 @@ class DataService {
     return http_token.get(`/agenda/horario-expediente`)
   }
 
-  getServico() {
-    return http_token.get(`/agenda/servico`)
-  }
-
   getAgenda(id, data, servico){
     return http_token.get(`/agenda/empresa/cliente/agenda`, {
       params: { id, data, servico },
@@ -38,6 +34,12 @@ class DataService {
   getAgendamentos(id, email) {
     return http_token.get(`/agenda/empresa/cliente/agenda/agendamento`, {
       params: { id, email },
+    });
+  }
+
+  getServicoByIDempresa(id, email, empresa_recurso_id){
+    return http_token.get(`/agenda/empresa/cliente/servico`, {
+      params: { id, email, empresa_recurso_id },
     });
   }
 

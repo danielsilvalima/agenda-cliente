@@ -14,6 +14,7 @@ import App from './App.vue'
 import { createApp } from 'vue'
 import vue3GoogleLogin from 'vue3-google-login'
 import store from './store';
+import './assets/css/global.css';
 
 const app = createApp(App)
 

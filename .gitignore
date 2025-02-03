@@ -24,3 +24,4 @@ pnpm-debug.log*
 src/styles/README.md
 src/pages/README.md
 src/plugins/README.md
+package-lock.json

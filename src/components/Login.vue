@@ -6,7 +6,7 @@
   {{ alertTitle }}
 
     <template v-slot:actions>
-      <v-btn
+      <v-btn size="small"
         color="blue"
         variant="text"
         @click="snackbar = false"
@@ -18,8 +18,8 @@
   <div class="login-screen">
     <div class="login-container">
       <!-- Título e Subtítulo -->
-      <h1 class="login-title">Bem-vindo ao seu Painel de Agendamentos</h1>
-      <p class="login-subtitle">
+      <h1 class="login-title text-caption">Bem-vindo ao seu Painel de Agendamentos</h1>
+      <p class="login-subtitle text-caption">
         Gerencie seus pedidos e clientes de forma prática e eficiente
       </p>
 
