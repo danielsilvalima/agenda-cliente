@@ -28,25 +28,28 @@
           <v-window-item v-for="(grupo, index) in recursosPaginados" :key="index">
             <v-container>
               <v-row justify="center" no-gutters >
-                <v-col v-for="recurso in grupo" :key="recurso.id" cols="12" sm="2" md="2">
-                  <v-card
-                    class="d-flex flex-column justify-center align-center pa-4 mx-2 text-center"
-                    height="100px" width="100px"
-                    elevation="2"
-                    :class="{ 'selected': selectedRecurso === recurso }"
-                    @click="selecionarRecurso(recurso)"
-                  >
-                    <v-img
-                      :width="80"
-                      aspect-ratio="16/9"
-                      cover style="border-radius: 50%;"
-                      :src="recurso.path">
-                    </v-img>
-                    <span class="text-caption font-weight-bold" style="white-space: normal; word-wrap: break-word;">
-                      {{ recurso.descricao }}
-                    </span>
-                  </v-card>
-                </v-col>
+                <v-slide-group show-arrows>
+                  <v-slide-group-item v-for="recurso in grupo" :key="recurso.id">
+                    <v-card
+                      class="d-flex flex-column justify-center align-center pa-4 mx-2 text-center mb-2"
+                      height="110px" width="100px"
+                      elevation="2"
+                      :class="{ 'selected': selectedRecurso === recurso }"
+                      @click="selecionarRecurso(recurso)"
+                    >
+                      <v-img
+                        :width="50"
+                        height="50"
+                        aspect-ratio="16/9"
+                        cover style="border-radius: 50%;"
+                        :src="recurso.path">
+                      </v-img>
+                      <span class="text-caption font-weight-bold" style="white-space: normal; word-wrap: break-word;">
+                        {{ recurso.descricao }}
+                      </span>
+                    </v-card>
+                  </v-slide-group-item>
+                </v-slide-group>
               </v-row>
             </v-container>
           </v-window-item>
@@ -55,44 +58,44 @@
 
     </v-row>
     <v-divider class="border-opacity-80" ></v-divider>
-    <v-expansion-panels class="mt-5" v-if="selectedRecurso !== null">
-      <v-expansion-panel>
-        <v-expansion-panel-title>
-          <div class="text-content">
-            <h3 class="primary-text text-caption">{{ titulo }}</h3>
-            <p class="secondary-text text-caption">ESCOLHA O SERVIÇO DESEJADO ABAIXO:</p>
-          </div>
-        </v-expansion-panel-title>
-        <v-expansion-panel-text>
-          <v-list>
-            <v-card
-              v-for="(servico, index) in listaServicos"
-              :key="servico.id"
-              class="mb-4">
-              <v-list-item
-                color="primary"
-                rounded="xl" @click="reservarServico(servico)"
-                class="d-flex justify-space-between align-center">
+    <v-list>
+      <v-card v-if="selectedRecurso !== null" class="mt-4 pa-4 " elevation="2" >
+        <div class="d-flex align-center justify-space-between">
+          <h3 class="text-h6 font-weight-bold text-caption">{{ titulo }}</h3>
+          <!--<v-badge color="primary" content="{{ listaServicos.length }} SERVIÇOS DISPONÍVEIS" />-->
+        </div>
 
-                  <v-list-item-content class="d-flex flex-column">
-                    <span class="font-weight-black text-caption">{{ servico.descricao }}</span>
-                  </v-list-item-content>
+        <p class="text-subtitle-2 mt-2 text-grey-darken-1 text-caption">
+          SELECIONE UM SERVIÇO ABAIXO PARA CONTINUAR:
+        </p>
+      </v-card>
+    </v-list>
+      <v-list>
+        <v-card
+          v-for="(servico, index) in listaServicos"
+          :key="servico.id"
+          class="mb-4" elevation="2">
+          <v-list-item
+            color="primary"
+            rounded="xl" @click="reservarServico(servico)"
+            class="d-flex justify-space-between align-center">
 
-                  <!-- Botão Reservar -->
-                  <template v-slot:append>
-                    <span class="font-weight-light text-caption">
-                      <v-icon color="primary" small class="mr-1">mdi-clock-outline</v-icon>
-                         {{ formatarDuracao(servico.duracao) }}
-                        <v-icon color="success" small class="ml-1 mr-1">mdi-currency-usd</v-icon>
-                         {{ parseFloat(servico.vlr || 0).toFixed(2).replace('.', ',') }}</span>
-                  </template>
+              <v-list-item-content class="d-flex flex-column">
+                <span class="font-weight-black text-caption">{{ servico.descricao }}</span>
+              </v-list-item-content>
 
-              </v-list-item>
-            </v-card>
-          </v-list>
-        </v-expansion-panel-text>
-      </v-expansion-panel>
-    </v-expansion-panels>
+              <!-- Botão Reservar -->
+              <template v-slot:append>
+                <span class="font-weight-light text-caption">
+                  <v-icon color="primary" small class="mr-1">mdi-clock-outline</v-icon>
+                      {{ formatarDuracao(servico.duracao) }}
+                    <v-icon color="success" small class="ml-1 mr-1">mdi-currency-usd</v-icon>
+                      {{ parseFloat(servico.vlr || 0).toFixed(2).replace('.', ',') }}</span>
+              </template>
+
+          </v-list-item>
+        </v-card>
+      </v-list>
 
 </template>
 

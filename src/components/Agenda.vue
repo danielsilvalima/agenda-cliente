@@ -85,11 +85,18 @@
             <p class="text-caption">
               O VALOR DO SERVIÇO É <strong>R$ {{ parseFloat(getVlrServico() || 0).toFixed(2).replace('.', ',') }}</strong>.
             </p>
-            <v-col cols="12" md="12" >
-              <v-text-field density="compact" :rules="[rules.required]" label="CELULAR" v-maska="'(##) #.####-####'"
-                maxLength="16" v-model="celular"
-              id="celular" name="celular"></v-text-field>
-          </v-col>
+            <v-row dense >
+              <v-col cols="12" md="12" >
+                <v-text-field density="compact" class="mt-4" :rules="[rules.required]" label="NOME COMPLETO"
+                  disabled="true" v-model="nome_completo"
+                id="nome_completo" name="nome_completo"></v-text-field>
+              </v-col>
+              <v-col cols="12" md="12" >
+                <v-text-field density="compact" :rules="[rules.required]" label="CELULAR" v-maska="'(##) #.####-####'"
+                  maxLength="16" v-model="celular"
+                id="celular" name="celular"></v-text-field>
+              </v-col>
+            </v-row>
             <br/>
             <p class="text-primary text-caption">
               TEM CERTEZA DE QUE DESEJA CONFIRMAR O AGENDAMENTO?
@@ -133,6 +140,7 @@ export default {
       horariosDisponiveis: [],
       horarioSelecionado: null,
       expedienteSelecionado: null,
+      nome_completo: null,
       titulo : '',
       loading: false,
       items: [
@@ -315,6 +323,16 @@ export default {
         this.snackbar = true;
         return;
       }
+      const storedCredential = localStorage.getItem("googleUserCredential");
+      if (!storedCredential) {
+        this.alertTitle = "NÃO FOI POSSÍVEL LOCALIZAR O E-MAIL";
+        this.snackbar = true;
+        this.loading = false;
+        return;
+      }
+      const decodedUser = JSON.parse(storedCredential);
+      this.nome_completo = decodedUser.name;
+
       this.modalConfirmacao = true;
     },
     atualizarData(data) {
