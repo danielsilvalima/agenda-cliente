@@ -33,6 +33,8 @@
             placeholder="DD/MM/AAAA"
             @update:model-value="buscarHorarios"
             hide-actions
+            type="button"
+            density="comfortable"
           ></v-date-input>
         </v-col>
       </v-row>
@@ -160,9 +162,6 @@ export default {
     servico() {
       return this.getServico;
     },
-    isMobile(){
-      return /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
-    }
   },
   created() {
     if(!this.servico){
@@ -207,6 +206,7 @@ export default {
     },*/
     buscarHorarios() {
       this.$root.setLoadingState(true);
+      console.log(this.servico);
       // Chama o método da store para buscar os horários
       let data = this.atualizarData(this.dataSelecionada);
       let horario = this.gerarHorario();
@@ -254,7 +254,7 @@ export default {
         this.snackbar = true;
         this.loading = false;
         return;
-      }console.log(this.celular);
+      }
       if(this.celular === '' || String(this.formataCelular(this.celular)).length < 11){
         this.alertTitle = 'CELULAR INVÁLIDO';
         this.snackbar = true;
@@ -275,7 +275,9 @@ export default {
         email: decodedUser.email,
         nome_completo: decodedUser.name,
         empresa_servico_id: servicoJson.id,
-        empresa_expediente_id : this.expedienteSelecionado
+        empresa_recurso_id: servicoJson.empresa_recurso_id,
+        empresa_expediente_id : this.expedienteSelecionado,
+        celular: this.formataCelular(this.celular)
       };
 
       this.$store
@@ -348,6 +350,11 @@ export default {
 </script>
 <script setup>
   import { vMaska } from "maska/vue"
+  import { computed } from 'vue';
+
+  const isMobile = computed(() => {
+    return /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+  });
 </script>
 <style>
 .text-content {
@@ -382,5 +389,4 @@ export default {
   background-color: #1976d2;
   color: white;
 }
-
 </style>
