@@ -39,7 +39,7 @@
                     >
                       <v-img
                         :width="50"
-                        height="50"
+                        :height="50"
                         aspect-ratio="16/9"
                         cover style="border-radius: 50%;"
                         :src="recurso.path">
