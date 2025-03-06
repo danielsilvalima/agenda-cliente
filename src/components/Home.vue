@@ -23,7 +23,7 @@
     </v-breadcrumbs>
     <v-row dense>
       <v-col cols="12" md="12">
-        <p class="secondary-text text-caption text-center">ESCOLHA O RECURSO DESEJADO ABAIXO:</p>
+        <p class="secondary-text text-caption text-center">ESCOLHA O PROFISSIONAL DESEJADO ABAIXO:</p>
         <v-window v-model="window" show-arrows>
           <v-window-item v-for="(grupo, index) in recursosPaginados" :key="index">
             <v-container>
