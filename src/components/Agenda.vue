@@ -214,7 +214,7 @@ export default {
     },*/
     buscarHorarios() {
       this.$root.setLoadingState(true);
-      console.log(this.servico);
+      //console.log(this.servico);
       // Chama o método da store para buscar os horários
       let data = this.atualizarData(this.dataSelecionada);
       let horario = this.gerarHorario();
