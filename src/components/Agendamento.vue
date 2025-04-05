@@ -221,7 +221,6 @@ export default {
       this.modalConfirmacao = true;
     },
     fecharModalConfirmacao() {
-      console.log('FECHOU');
       this.modalConfirmacao = false;
       this.agendamentoSelecionado = null;
     },
