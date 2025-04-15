@@ -20,7 +20,7 @@
       <!-- Título e Subtítulo -->
       <h1 class="login-title text-caption">Bem-vindo ao seu Painel de Agendamentos</h1>
       <p class="login-subtitle text-caption">
-        Gerencie seus pedidos e clientes de forma prática e eficiente
+        Gerencie seus agendamentos e clientes de forma prática e eficiente
       </p>
 
       <!-- Botão de Login com o Google -->

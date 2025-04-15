@@ -1,18 +1,20 @@
 <template>
   <v-app>
-    <v-main>
-      <div id="app">
-        <!-- Progress Circular Overlay -->
-        <div v-if="isLoading" class="overlay">
-          <v-progress-circular
-            color="primary"
-            indeterminate
-            size="64"
-          ></v-progress-circular>
-        </div>
-      </div>
+    <v-snackbar
+      v-model="$store.state.toast.toast.show"
+      :color="$store.state.toast.toast.color"
+    >
+      {{ $store.state.toast.toast.message }}
+    </v-snackbar>
+
+    <v-overlay
+      :model-value="$store.state.loading.loading"
+      class="d-flex justify-center align-center"
+    >
+      <v-progress-circular indeterminate size="64" color="primary" />
+    </v-overlay>
+
       <router-view />
-    </v-main>
   </v-app>
 </template>
 

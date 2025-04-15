@@ -193,7 +193,7 @@ export default {
   },
   methods:{
     /*async carregarEmpresa() {
-      this.$root.setLoadingState(true);
+      this.$store.dispatch("loading/showLoading");
       const storedCredential = localStorage.getItem("googleUserCredential");
       if (storedCredential) {
         try {
@@ -208,12 +208,12 @@ export default {
           this.alertTitle = "ERRO AO CARREGAR EMPRESA: " + error;
           this.snackbar = true;
         }finally {
-          this.$root.setLoadingState(false);
+          this.$store.dispatch("loading/hideLoading");
         }
       }
     },*/
     buscarHorarios() {
-      this.$root.setLoadingState(true);
+      this.$store.dispatch("loading/showLoading");
       //console.log(this.servico);
       // Chama o método da store para buscar os horários
       let data = this.atualizarData(this.dataSelecionada);
@@ -247,7 +247,7 @@ export default {
         console.error('Erro ao buscar horários:', error);
       })
       .finally(() =>{
-        this.$root.setLoadingState(false);
+        this.$store.dispatch("loading/hideLoading");
       });
     },
     selecionarHorario(horario) {

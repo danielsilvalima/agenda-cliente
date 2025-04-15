@@ -3,6 +3,8 @@ import storeEmpresa from './empresa';
 import storeClienteAgendamento from './clienteagendamento';
 import storeServico from './servico';
 import storeCliente from './cliente';
+import storeToast from './toast';
+import storeLoading from './loading';
 
 export default createStore({
   modules: {
@@ -10,5 +12,7 @@ export default createStore({
     clienteAgendamento: storeClienteAgendamento,
     servico: storeServico,
     cliente: storeCliente,
+    toast: storeToast,
+    loading: storeLoading,
   },
 });

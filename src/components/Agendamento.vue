@@ -160,7 +160,7 @@ export default {
   },
   methods:{
     async carregarEmpresa() {
-      this.$root.setLoadingState(true);
+      this.$store.dispatch("loading/showLoading");
       const storedCredential = localStorage.getItem("googleUserCredential");
       if (storedCredential) {
         try {
@@ -172,7 +172,7 @@ export default {
           this.alertTitle = "ERRO AO CARREGAR EMPRESA: " + error;
           this.snackbar = true;
         } finally {
-          this.$root.setLoadingState(false);
+          this.$store.dispatch("loading/hideLoading");
         }
       }
     },
